@@ -4,8 +4,8 @@ import entities.Relic;
 import entities.RelicType;
 
 public class Selmira extends Boss{
-    protected Selmira(String name, int floor, int maxHp, int attack, int defense) {
-        super(name, floor, maxHp, attack, defense);
+    public Selmira(String name, int floor, int maxHp, int attack, int defense, long reactionTimeMs, int soulsReward) {
+        super(name, floor, maxHp, attack, defense, reactionTimeMs, soulsReward);
     }
 
     @Override

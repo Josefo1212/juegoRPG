@@ -4,59 +4,49 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Random;
 import entities.Player;
+import enemies.Enemy;
 
 public class QTECombat {
-    /**
-     * Run a QTE combat between a Player and a simple enemy described by parameters.
-     * Returns true if the player wins, false if the player is defeated.
-     */
-    public static boolean run(BufferedReader br, Player player, String enemyName, int enemyHpInit, int enemyAttack, int enemyDefense) throws IOException {
-        int enemyHp = enemyHpInit;
-
+    public static boolean run(BufferedReader br, Player player, Enemy enemy) throws IOException {
         System.out.println();
-        System.out.println("--- QTE Parry/Dodge Demo ---");
-        System.out.println("Antes de iniciar: el jugador está siendo atacado por un enemigo.");
-        System.out.println("El enemigo prepara un ataque inicial...");
+        System.out.println("--- QTE Parry/Dodge ---");
+        System.out.println("Encuentro: " + enemy.getName());
 
-        // initial hit: use a small fixed hit to kick off
-        player.takeDamage(Math.max(5 - player.getMaxHp()/100, 0)); // keep small initial impact
+        // initial hit: small impact
+        player.takeDamage(Math.max(5 - player.getMaxHp()/100, 0));
         System.out.println("Ataque inicial: el jugador recibe 5 daño. Vida: " + player.getHp() + "/" + player.getMaxHp());
         System.out.println();
 
         Random rnd = new Random();
         int round = 1;
 
-        while (player.isAlive() && enemyHp > 0) {
+    while (player.isAlive() && enemy.isAlive()) {
             System.out.println();
             System.out.println("--- Ronda " + round + " ---");
             System.out.println("El enemigo parece prepararse...");
 
-            // random preparation delay between 2 and 10 seconds (hidden)
-            int prepMs = 2000 + rnd.nextInt(8001); // 2000..10000
+            int prepMs = 2000 + rnd.nextInt(8001); // delay entre 2..10 segundos
             try {
                 Thread.sleep(prepMs);
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }
 
-            // random parry key a-z
+            // letra random de parry 
             char parryKey = (char) ('a' + rnd.nextInt(26));
             System.out.println("El enemigo prepara un ataque. Presiona '" + parryKey + "' para parry.");
 
-            // Timed input: wait up to 4000 ms for the correct char using non-blocking polling
-            long timeoutMs = 4000L;
+                long timeoutMs = Math.max(200L, enemy.getReactionTimeMs());
             long deadline = System.currentTimeMillis() + timeoutMs;
             char c = '\0';
             boolean gotInput = false;
             try {
                 while (System.currentTimeMillis() < deadline) {
                     if (br.ready()) {
-                        int r = br.read(); // read one char non-blocking (since ready() true)
+                        int r = br.read();
                         if (r == -1) break;
                         char readChar = (char) r;
-                        // skip newlines and spaces
                         if (Character.isWhitespace(readChar)) {
-                            // consume and continue
                             if (br.ready()) {
                                 while (br.ready()) {
                                     int rr = br.read();
@@ -66,7 +56,6 @@ public class QTECombat {
                             continue;
                         }
                         c = Character.toLowerCase(readChar);
-                        // consume rest of the line if any
                         if (br.ready()) {
                             while (br.ready()) {
                                 int rr = br.read();
@@ -79,52 +68,84 @@ public class QTECombat {
                     try { Thread.sleep(50); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); break; }
                 }
             } catch (IOException ioe) {
-                // fall back to no input
             }
 
             if (gotInput && c == parryKey) {
                 System.out.println("Parry exitoso! Repeles el ataque y contraatacas por 4 daño.");
-                int dmg = Math.max(4 - enemyDefense, 0);
-                enemyHp = Math.max(enemyHp - dmg, 0);
+                int dmg = Math.max(4 - enemy.getDefense(), 0);
+                enemy.takeDamage(dmg);
             } else {
-                // failed parry or timeout: player takes damage
                 System.out.println("No has parryeado a tiempo o golpeaste la tecla equivocada.");
-                player.takeDamage(enemyAttack);
+                player.takeDamage(enemy.rollAttack());
                 System.out.println("Parry fallido. Recibes daño. Vida jugador: " + player.getHp());
+                // check si el jugador muere y tiene segunda oportunidad
+                if (!player.isAlive()) {
+                    if (player.consumeSecondChance()) {
+                        int reviveHp = Math.max(1, player.getMaxHp() / 2);
+                        player.heal(reviveHp);
+                        System.out.println("Tu segunda oportunidad se activa. Recuperas " + reviveHp + " HP y vuelves al combate.");
+                    } else {
+                        System.out.println("Has sido derrotado. Fin del combate.");
+                        return false;
+                    }
+                }
             }
 
-            System.out.println("Vida jugador: " + player.getHp() + ", Vida enemigo: " + enemyHp);
-            if (enemyHp <= 0) break;
+            System.out.println("Vida jugador: " + player.getHp() + ", Vida enemigo: " + enemy.getHp());
+            if (!enemy.isAlive()) break;
 
-            // Player turn
+            // Turno de jugador
             System.out.println("Es tu turno: (a) atacar  (p) usar pocion");
             System.out.print("> ");
-            // Read player action; loop if the line is empty to avoid losing turn due to leftover newline
             String action = null;
             while (true) {
                 action = br.readLine();
-                if (action == null) break; // EOF
-                if (!action.trim().isEmpty()) break; // got non-empty input
-                // otherwise prompt again
+                if (action == null) break;
+                if (!action.trim().isEmpty()) break;
                 System.out.print("> ");
             }
             char act = (action != null && !action.isEmpty()) ? action.trim().toLowerCase().charAt(0) : '\0';
             if (act == 'a') {
-                int dmg = Math.max(player.rollAttack() - enemyDefense, 0);
-                enemyHp = Math.max(enemyHp - dmg, 0);
-                System.out.println("Atacaste por " + dmg + " daño. Vida enemiga: " + enemyHp);
+                int dmg = Math.max(player.rollAttack() - enemy.getDefense(), 0);
+                enemy.takeDamage(dmg);
+                System.out.println("Atacaste por " + dmg + " daño. Vida enemiga: " + enemy.getHp());
             } else if (act == 'u') {
-                // legacy: 'u' small heal
                 player.heal(20);
                 System.out.println("Usaste poción. Vida jugador: " + player.getHp());
             } else if (act == 'p') {
-                player.healPercent(25);
-                System.out.println("Usaste poción. Vida jugador: " + player.getHp());
+                while (true) {
+                    System.out.println("Pociones disponibles:");
+                    System.out.println("1) Poción de vida (restaura 50% HP) - cantidad: " + player.getHealthPotions());
+                    System.out.println("2) Poción de daño (+10 ataque por 1 combate) - cantidad: " + player.getDamagePotions());
+                    System.out.println("0) No usar poción");
+                    System.out.print("> ");
+                    String opt = br.readLine();
+                    if (opt == null) { System.out.println("No usaste poción."); break; }
+                    opt = opt.trim();
+                    if (opt.equals("0")) { System.out.println("No usaste poción."); break; }
+                    if (opt.equals("1")) {
+                        if (player.useHealthPotion()) {
+                            System.out.println("Usaste una Poción de vida. Vida jugador: " + player.getHp());
+                        } else {
+                            System.out.println("No tienes pociones de vida.");
+                        }
+                        break;
+                    }
+                    if (opt.equals("2")) {
+                        if (player.useDamagePotion()) {
+                            System.out.println("Usaste una Poción de daño. +10 ataque aplicado para el siguiente combate.");
+                        } else {
+                            System.out.println("No tienes pociones de daño.");
+                        }
+                        break;
+                    }
+                    System.out.println("Opción inválida.");
+                }
             } else {
                 System.out.println("Acción no válida. Pierdes el turno.");
             }
 
-            if (enemyHp <= 0) break;
+            if (!enemy.isAlive()) break;
 
             round++;
         }
@@ -133,8 +154,12 @@ public class QTECombat {
         if (!player.isAlive()) {
             System.out.println("Has sido derrotado. Fin del combate.");
             return false;
-        } else if (enemyHp <= 0) {
+        } else if (!enemy.isAlive()) {
             System.out.println("Has derrotado al enemigo. Fin del combate.");
+            if (enemy.getSoulsReward() > 0) {
+                player.addSouls(enemy.getSoulsReward());
+                System.out.println("Has obtenido " + enemy.getSoulsReward() + " almas. Total: " + player.getSouls());
+            }
             return true;
         } else {
             System.out.println("Fin del combate.");
@@ -144,6 +169,8 @@ public class QTECombat {
 
     /** Convenience demo method using a fresh Player and a sample enemy */
     public static void runDemo(BufferedReader br) throws IOException {
-        run(br, new Player(), "Enemigo demo", 50, 10, 2);
+        // demo enemy: Centinela Oxidado (4s reaction)
+        Enemy demo = new enemies.RustySentinels("Centinela Oxidado", 1, 30, 8, 1, 4000L, 1);
+        run(br, new Player(), demo);
     }
 }

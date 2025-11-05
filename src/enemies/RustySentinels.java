@@ -1,8 +1,9 @@
 package enemies;
-//minion del piso 1
+
+// minion del piso 1 (Centinela Oxidado)
 public class RustySentinels extends Enemy{
 
-    protected RustySentinels(String name, int floor, int maxHp, int attack, int defense) {
-        super(name, floor, maxHp, attack, defense);
+    public RustySentinels(String name, int floor, int maxHp, int attack, int defense, long reactionTimeMs, int soulsReward) {
+        super(name, floor, maxHp, attack, defense, reactionTimeMs, soulsReward);
     }
 }

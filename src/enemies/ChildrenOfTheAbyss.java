@@ -1,7 +1,8 @@
 package enemies;
-//minion del piso 3
+
+// minion del piso 3
 public class ChildrenOfTheAbyss extends Enemy{
-    protected ChildrenOfTheAbyss(String name, int floor, int maxHp, int attack, int defense) {
-        super(name, floor, maxHp, attack, defense);
+    public ChildrenOfTheAbyss(String name, int floor, int maxHp, int attack, int defense, long reactionTimeMs, int soulsReward) {
+        super(name, floor, maxHp, attack, defense, reactionTimeMs, soulsReward);
     }
 }
