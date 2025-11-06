@@ -74,8 +74,25 @@ public class Player {
     public void grantSecondChance() { inventory.grantSecondChance(); }
     public boolean consumeSecondChance() { return inventory.consumeSecondChance(); }
 
-    // NUEVO: reliquias
-    public void addRelic(Relic relic) { inventory.addRelic(relic); }
+    // NUEVO: reliquias con incremento de stats al recibirlas
+    public void addRelic(Relic relic) {
+        if (relic == null) return;
+        boolean added = inventory.addRelic(relic);
+        if (!added) return; // ya la tenías, no re-aplicar bonus
+
+        RelicType t = relic.getType();
+        if (t == RelicType.sacredTitaniumCore) {
+            // 1ª reliquia: fuerza
+            this.setStrength(this.rollAttack() - this.tempAttackBuff + 5);
+        } else if (t == RelicType.songOfTheInnerFlame) {
+            // 2ª reliquia: magia
+            this.magicPower += 5;
+        } else if (t == RelicType.emblemOfEternalReturn) {
+            // 3ª reliquia: vitalidad/divinidad (vida máxima)
+            this.setMaxHp(this.getMaxHp() + 10);
+        }
+    }
+
     public boolean hasRelic(RelicType type) { return inventory.hasRelic(type); }
     public List<Relic> getRelics() { return inventory.getRelics(); }
 
@@ -96,4 +113,7 @@ public class Player {
 
     // curar completamente al maximo de HP (usado en hub/rest)
     public void fullRest() { this.hp = this.maxHp; }
+
+    // NUEVO: getter de magia
+    public int getMagicPower() { return magicPower; }
 }

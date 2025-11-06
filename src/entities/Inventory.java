@@ -33,12 +33,14 @@ public class Inventory {
 		return false;
 	}
 
-	// NUEVO: utilidades de reliquias
-	public void addRelic(Relic relic) {
-		if (relic == null) return;
+	// CAMBIO: devolver true si se añadió (evitar duplicados)
+	public boolean addRelic(Relic relic) {
+		if (relic == null) return false;
 		if (!hasRelic(relic.getType())) {
 			relics.add(relic);
+			return true;
 		}
+		return false;
 	}
 
 	public boolean hasRelic(RelicType type) {

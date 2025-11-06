@@ -41,15 +41,23 @@ public class Floor {
         while (true) {
             System.out.println();
             System.out.println("Estás en la Sala 1 (El Hub). Vida: " + player.getHp() + "/" + player.getMaxHp() + ", Almas: " + player.getSouls());
-            System.out.println("Elige una sala para visitar (2-5), 0 para salir del piso:");
+            System.out.println("Elige una sala para visitar (2-" + rooms.size() + "), 0 para salir del piso, o 'I' para ver inventario:");
             for (int i = 2; i <= rooms.size(); i++) {
                 Room r = byId.get(i);
                 if (r != null) System.out.println(i + ") " + r.getTitle());
             }
+            System.out.println("I) Ver inventario");
             System.out.print("> ");
             String line = br.readLine();
             if (line == null) return false;
             line = line.trim();
+
+            // NUEVO: ver inventario sin salir del hub
+            if (line.equalsIgnoreCase("i") || line.equalsIgnoreCase("inv")) {
+                showInventory(br, player);
+                continue;
+            }
+
             if (line.equals("0")) {
                 System.out.println("Sales del piso y regresas al mundo exterior.");
                 return false;
@@ -66,7 +74,6 @@ public class Floor {
 
             // Handle specific room types with behaviour
             if (chosen.getType() == RoomType.ENEMIES) {
-                // CAMBIO: pasar Room para mostrar diálogo contextual
                 handleEnemiesRoom(br, player, chosen);
             } else if (chosen.getType() == RoomType.MARKET) {
                 handleMarket(br, player, chosen);
@@ -87,6 +94,33 @@ public class Floor {
             player.fullRest();
             System.out.println("Has descansado y recuperado toda la vida: " + player.getHp() + "/" + player.getMaxHp());
         }
+    }
+
+    // NUEVO: mostrar inventario y reliquias
+    private void showInventory(BufferedReader br, Player player) throws IOException {
+        System.out.println();
+        System.out.println("=== Inventario ===");
+        System.out.println("- Almas: " + player.getSouls());
+        System.out.println("- Vida: " + player.getHp() + "/" + player.getMaxHp());
+        System.out.println("- Ataque actual: " + player.rollAttack());
+        // NUEVO: magia y aviso si está en 0
+        int mp = player.getMagicPower();
+        System.out.println("- Magia: " + mp + (mp == 0 ? "  (Necesitas la reliquia 'Canto de la llama interior' para recuperar la magia)" : ""));
+        System.out.println("- Pociones de vida: " + player.getHealthPotions());
+        System.out.println("- Pociones de daño: " + player.getDamagePotions());
+        System.out.println("- Segunda oportunidad: " + (player.hasSecondChance() ? "Sí" : "No"));
+        List<entities.Relic> relics = player.getRelics();
+        if (relics.isEmpty()) {
+            System.out.println("- Reliquias: (ninguna)");
+        } else {
+            System.out.println("- Reliquias:");
+            for (entities.Relic r : relics) {
+                System.out.println("   • " + r.getName());
+            }
+        }
+        System.out.println();
+        System.out.println("(Pulsa Enter para volver al hub)");
+        br.readLine();
     }
 
 
