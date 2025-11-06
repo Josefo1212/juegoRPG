@@ -1,9 +1,16 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Inventory {
 	private int healthPotions = 0;
 	private int damagePotions = 0;
 	private boolean secondChance = false;
+
+	// NUEVO: almacenamiento de reliquias
+	private final List<Relic> relics = new ArrayList<>();
 
 	public int getHealthPotions() { return healthPotions; }
 	public void addHealthPotions(int n) { if (n > 0) this.healthPotions += n; }
@@ -26,5 +33,23 @@ public class Inventory {
 		return false;
 	}
 
+	// NUEVO: utilidades de reliquias
+	public void addRelic(Relic relic) {
+		if (relic == null) return;
+		if (!hasRelic(relic.getType())) {
+			relics.add(relic);
+		}
+	}
 
+	public boolean hasRelic(RelicType type) {
+		if (type == null) return false;
+		for (Relic r : relics) {
+			if (r.getType() == type) return true;
+		}
+		return false;
+	}
+
+	public List<Relic> getRelics() {
+		return Collections.unmodifiableList(relics);
+	}
 }

@@ -66,9 +66,10 @@ public class Floor {
 
             // Handle specific room types with behaviour
             if (chosen.getType() == RoomType.ENEMIES) {
-                handleEnemiesRoom(br, player);
+                // CAMBIO: pasar Room para mostrar diálogo contextual
+                handleEnemiesRoom(br, player, chosen);
             } else if (chosen.getType() == RoomType.MARKET) {
-                handleMarket(br, player);
+                handleMarket(br, player, chosen);
             } else if (chosen.getType() == RoomType.PUZZLE) {
                 handlePuzzleRoom(br, player, chosen);
             } else if (chosen.getType() == RoomType.RUINS) {
@@ -89,9 +90,19 @@ public class Floor {
     }
 
 
-    private void handleEnemiesRoom(BufferedReader br, Player player) throws IOException {
+    // CAMBIO: firma recibe Room para imprimir diálogo propio (Sala 2 Piso 2)
+    private void handleEnemiesRoom(BufferedReader br, Player player, Room room) throws IOException {
         System.out.println();
-        System.out.println("Has entrado en la sala de enemigos. Puedes luchar contra enemigos para obtener Almas.");
+        if ("El Velo de los Juramentos".equals(this.name) && "Salón de los Susurros".equals(room.getTitle())) {
+            for (String line : java.util.Objects.requireNonNullElse(room.getDialogue(), java.util.List.<String>of())) {
+                System.out.println(line);
+                System.out.println("(Pulsa Enter para continuar...)");
+                br.readLine();
+            }
+        } else {
+            System.out.println("Has entrado en la sala de enemigos. Puedes luchar para obtener Almas.");
+        }
+
         while (true) {
             System.out.println("¿Deseas enfrentar a un enemigo? (s = sí / n = no)");
             System.out.print("> ");
@@ -123,8 +134,40 @@ public class Floor {
         }
     }
 
-    private void handleMarket(BufferedReader br, Player player) throws IOException {
+    // CAMBIO: mercado contextual para Tejedora de Secretos
+    private void handleMarket(BufferedReader br, Player player, Room room) throws IOException {
         System.out.println();
+        if ("El Velo de los Juramentos".equals(this.name) && "Tejedora de Secretos".equals(room.getTitle())) {
+            for (String line : java.util.Objects.requireNonNullElse(room.getDialogue(), java.util.List.<String>of())) {
+                System.out.println(line);
+            }
+            while (true) {
+                System.out.println("Tienes " + player.getSouls() + " almas.");
+                System.out.println("1) Velo de Concentración (+10 ataque 1 combate) - 3 almas");
+                System.out.println("2) Fragmento de Cántico (segunda oportunidad) - 4 almas");
+                System.out.println("3) Tinta de Juramento (objeto de sabor) - 2 almas");
+                System.out.println("0) Salir");
+                System.out.print("> ");
+                String line = br.readLine();
+                if (line == null) break;
+                line = line.trim();
+                if (line.equals("0")) break;
+                if (line.equals("1")) {
+                    if (player.spendSouls(3)) { player.addDamagePotions(1); System.out.println("Compraste Velo de Concentración."); }
+                    else System.out.println("No tienes suficientes almas.");
+                } else if (line.equals("2")) {
+                    if (player.spendSouls(4)) { player.grantSecondChance(); System.out.println("Compraste Fragmento de Cántico."); }
+                    else System.out.println("No tienes suficientes almas.");
+                } else if (line.equals("3")) {
+                    if (player.spendSouls(2)) { System.out.println("Compraste Tinta de Juramento. Percibes símbolos ocultos en las paredes."); }
+                    else System.out.println("No tienes suficientes almas.");
+                } else {
+                    System.out.println("Opción inválida.");
+                }
+            }
+            return;
+        }
+
         System.out.println("Entras al Mercado del Silencio. Un mercader te observa desde su puesto.");
         while (true) {
             System.out.println("Mercader: 'Tengo objetos a cambio de Almas.' Tu tienes: " + player.getSouls() + " almas.");
@@ -164,6 +207,24 @@ public class Floor {
             System.out.println("La sala del acertijo ya fue resuelta. No hay más recompensas aquí.");
             return;
         }
+        if ("El Velo de los Juramentos".equals(this.name) && "Cámara del Velo".equals(room.getTitle())) {
+            for (String line : java.util.Objects.requireNonNullElse(room.getDialogue(), java.util.List.<String>of())) {
+                System.out.println(line);
+            }
+            System.out.print("Respuesta: ");
+            String ans = br.readLine();
+            if (ans == null) ans = "";
+            String cleaned = ans.trim().toLowerCase();
+            if (cleaned.contains("juramento")) {
+                System.out.println("Aurelion: “Un juramento puede ser redención… o condena. Hoy será mi redención.”");
+                System.out.println("Recompensa: Tinta de Juramento — revela secretos ocultos en el templo.");
+                solvedRooms.add(room.getId());
+            } else {
+                System.out.println("La inscripción se apaga. No obtienes nada.");
+            }
+            return;
+        }
+
         System.out.println("Al entrar, una voz metálica resuena desde una estatua rota:");
         System.out.println("\"No tengo filo, pero rompo muros.\nNo soy arma, pero soy temido.\n¿Qué soy?\"");
         System.out.print("Respuesta: ");

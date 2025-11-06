@@ -13,7 +13,7 @@ public class Zarketh extends Boss{
         return new Relic(
                 "Emblema del Eterno Retorno",
                 RelicType.emblemOfEternalReturn,
-                "Restaura la divinidad e inmortalidad de Vaelros."
+                "Restaura la divinidad e inmortalidad de Aurelion."
         );
     }
 }

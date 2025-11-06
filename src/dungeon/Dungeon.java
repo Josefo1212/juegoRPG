@@ -70,4 +70,71 @@ public class Dungeon {
         Floor f = createPrimerPiso();
         return f.play(br, p);
     }
+
+    // NUEVO: crear segundo piso con textos actualizados
+    public static Floor createSegundoPiso() {
+        Floor f = new Floor(
+                "El Velo de los Juramentos",
+                "Un templo distorsionado por pactos rotos y magia quebrada. Aquí se perdió su vínculo con lo arcano."
+        );
+
+        // Sala 1 — Atrio del Pacto
+        f.addRoom(new Room(1,
+                "Atrio del Pacto",
+                "El atrio rezuma energía de pactos quebrados; las paredes parecen exudar memoria arcana.",
+                Arrays.asList(
+                        "Aurelion: “Los muros lloran pactos rotos. Aquí, mi magia fue arrancada… pero no olvidada.”"
+                ),
+                RoomType.ENTRANCE));
+
+        // Sala 2 — Salón de los Susurros
+        f.addRoom(new Room(2,
+                "Salón de los Susurros",
+                "Ecos quebrados reptan entre inscripciones suspendidas como humo arcano.",
+                Arrays.asList(
+                        "Susurrador: “…prometiste… no romperías el círculo… traición…”",
+                        "Aurelion: “Fui traicionado. Pero mi palabra aún tiene poder.”"
+                ),
+                RoomType.ENEMIES));
+
+        // Sala 3 — Cámara del Velo (Acertijo)
+        f.addRoom(new Room(3,
+                "Cámara del Velo",
+                "Una inscripción flotante palpita esperando ser comprendida.",
+                Arrays.asList(
+                        "Inscripción: “Soy invisible, pero puedo romper reinos.",
+                        "Soy palabra, pero también prisión. ¿Qué soy?”"
+                ),
+                RoomType.PUZZLE));
+
+        // Sala 4 — Tejedora de Secretos (Tienda)
+        f.addRoom(new Room(4,
+                "Tejedora de Secretos",
+                "Hilos de luz son tejidos por manos invisibles formando símbolos juramentados.",
+                Arrays.asList(
+                        "Lira: “Los pactos rotos dejan huecos… y yo los lleno. Magia, memoria, o engaño. Todo tiene precio.”",
+                        "Objetos: Velo de Concentración — mejora magia por 3 combates.",
+                        "Fragmento de Cántico — revive una vez con mitad de vida.",
+                        "Tinta de Juramento — revela secretos en las paredes del templo."
+                ),
+                RoomType.MARKET));
+
+        // Sala 5 — Umbral de la Voz Encadenada (Boss)
+        f.addRoom(new Room(5,
+                "Umbral de la Voz Encadenada",
+                "Cadenas de luz silenciosa rodean una figura que canta sin sonido.",
+                Arrays.asList(
+                        "Selmira: “¿Vienes a reclamar lo que abandonaste? La magia no perdona, Aurelion.”",
+                        "Aurelion: “No vine a pedir perdón. Vine a recuperar lo que me fue robado.”"
+                ),
+                RoomType.BOSS));
+
+        return f;
+    }
+
+    // NUEVO: jugar segundo piso
+    public static boolean playSegundoPiso(BufferedReader br, Player p) throws IOException {
+        Floor f = createSegundoPiso();
+        return f.play(br, p);
+    }
 }

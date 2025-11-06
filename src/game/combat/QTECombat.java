@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Random;
 import entities.Player;
 import enemies.Enemy;
+import enemies.Boss;
+import entities.Relic;
 
 public class QTECombat {
     public static boolean run(BufferedReader br, Player player, Enemy enemy) throws IOException {
@@ -160,6 +162,18 @@ public class QTECombat {
                 player.addSouls(enemy.getSoulsReward());
                 System.out.println("Has obtenido " + enemy.getSoulsReward() + " almas. Total: " + player.getSouls());
             }
+
+            // NUEVO: premiar reliquia si es un jefe
+            if (enemy instanceof Boss) {
+                Relic relic = ((Boss) enemy).getRelicReward();
+                if (relic != null) {
+                    player.addRelic(relic);
+                    System.out.println("Has obtenido la reliquia: " + relic.getName());
+                    String desc = relic.getDescription();
+                    if (desc != null && !desc.isEmpty()) System.out.println(desc);
+                }
+            }
+
             return true;
         } else {
             System.out.println("Fin del combate.");

@@ -1,5 +1,7 @@
 package entities;
 
+import java.util.List;
+
 public class Player {
     private static final String playerName = "Aurelion";
 
@@ -71,6 +73,11 @@ public class Player {
     public boolean hasSecondChance() { return inventory.hasSecondChance(); }
     public void grantSecondChance() { inventory.grantSecondChance(); }
     public boolean consumeSecondChance() { return inventory.consumeSecondChance(); }
+
+    // NUEVO: reliquias
+    public void addRelic(Relic relic) { inventory.addRelic(relic); }
+    public boolean hasRelic(RelicType type) { return inventory.hasRelic(type); }
+    public List<Relic> getRelics() { return inventory.getRelics(); }
 
     // Buffo temporal
     public void addTempAttackBuff(int amount, int durationCombats) {

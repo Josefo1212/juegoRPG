@@ -24,6 +24,11 @@ public class Room {
     public String getDescription() { return description; }
     public RoomType getType() { return type; }
 
+    // NUEVO / CONFIRMADO: getter de diálogo
+    public List<String> getDialogue() {
+        return dialogue;
+    }
+
     public void play(BufferedReader br) throws IOException {
         System.out.println();
         System.out.println("== " + title + " ==");
