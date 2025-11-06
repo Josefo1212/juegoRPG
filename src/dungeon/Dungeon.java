@@ -137,4 +137,71 @@ public class Dungeon {
         Floor f = createSegundoPiso();
         return f.play(br, p);
     }
+
+    // NUEVO: crear tercer piso con textos actualizados
+    public static Floor createTercerPiso() {
+        Floor f = new Floor(
+                "El Núcleo del Abismo",
+                "El corazón del caos, donde la Grieta respira y la realidad se distorsiona. Aquí se perdió su divinidad."
+        );
+
+        // Sala 1 — Umbral de la Grieta (Entrada)
+        f.addRoom(new Room(1,
+                "Umbral de la Grieta",
+                "El aire vibra y se desgarra en hilos de oscuridad latente.",
+                Arrays.asList(
+                        "Aurelion: “El aire se desgarra. Aquí, la realidad se retuerce. Mi divinidad yace en lo profundo.”"
+                ),
+                RoomType.ENTRANCE));
+
+        // Sala 2 — Cámara de los Nacidos del Vacío (Enemigos)
+        f.addRoom(new Room(2,
+                "Cámara de los Nacidos del Vacío",
+                "Presencias imposibles reptan por las paredes; el suelo no siempre es suelo.",
+                Arrays.asList(
+                        "Hijo del Abismo: “Somos el fin… somos el principio… tú eres el error…”",
+                        "Aurelion: “Soy el equilibrio. Y he venido a cerrarlos.”"
+                ),
+                RoomType.ENEMIES));
+
+        // Sala 3 — Cámara del Olvido (Acertijo)
+        f.addRoom(new Room(3,
+                "Cámara del Olvido",
+                "La sombra de la nada se condensa en palabras que no existen.",
+                Arrays.asList(
+                        "Susurro múltiple: “No tengo forma, pero devoro todo.",
+                        "No tengo fin, pero todos caen en mí. ¿Qué soy?”"
+                ),
+                RoomType.PUZZLE));
+
+        // Sala 4 — Comerciante del Vacío (Tienda)
+        f.addRoom(new Room(4,
+                "Comerciante del Vacío",
+                "Un tendero de ojos huecos exhibe objetos que no deberían existir.",
+                Arrays.asList(
+                        "Nul: “El abismo consume… pero también escupe. Yo recojo lo que queda. ¿Quieres comprarle al vacío?”",
+                        "Objetos: Sangre de Grieta — mejora ataque por 3 combates.",
+                        "Esquirla de Realidad — permite evitar un combate.",
+                        "Ojo del Retorno — revela la posición del jefe."
+                ),
+                RoomType.MARKET));
+
+        // Sala 5 — Trono del Portador (Boss)
+        f.addRoom(new Room(5,
+                "Trono del Portador",
+                "El Portador se alza, y con él, la Grieta respira más hondo.",
+                Arrays.asList(
+                        "Zar’keth: “Tu divinidad fue devorada. Solo queda el vacío. ¿Aún crees que puedes cerrarlo?”",
+                        "Aurelion: “Con el Emblema en mi mano y la voluntad intacta… cerraré lo que tú abriste.”"
+                ),
+                RoomType.BOSS));
+
+        return f;
+    }
+
+    // NUEVO: jugar tercer piso
+    public static boolean playTercerPiso(BufferedReader br, Player p) throws IOException {
+        Floor f = createTercerPiso();
+        return f.play(br, p);
+    }
 }

@@ -99,6 +99,12 @@ public class Floor {
                 System.out.println("(Pulsa Enter para continuar...)");
                 br.readLine();
             }
+        } else if ("El Núcleo del Abismo".equals(this.name) && "Cámara de los Nacidos del Vacío".equals(room.getTitle())) {
+            for (String line : java.util.Objects.requireNonNullElse(room.getDialogue(), java.util.List.<String>of())) {
+                System.out.println(line);
+                System.out.println("(Pulsa Enter para continuar...)");
+                br.readLine();
+            }
         } else {
             System.out.println("Has entrado en la sala de enemigos. Puedes luchar para obtener Almas.");
         }
@@ -166,6 +172,35 @@ public class Floor {
                 }
             }
             return;
+        } else if ("El Núcleo del Abismo".equals(this.name) && "Comerciante del Vacío".equals(room.getTitle())) {
+            for (String line : java.util.Objects.requireNonNullElse(room.getDialogue(), java.util.List.<String>of())) {
+                System.out.println(line);
+            }
+            while (true) {
+                System.out.println("Tienes " + player.getSouls() + " almas.");
+                System.out.println("1) Sangre de Grieta (+10 ataque 1 combate) - 3 almas");
+                System.out.println("2) Esquirla de Realidad (objeto de sabor) - 3 almas");
+                System.out.println("3) Ojo del Retorno (objeto de sabor) - 2 almas");
+                System.out.println("0) Salir");
+                System.out.print("> ");
+                String line = br.readLine();
+                if (line == null) break;
+                line = line.trim();
+                if (line.equals("0")) break;
+                if (line.equals("1")) {
+                    if (player.spendSouls(3)) { player.addDamagePotions(1); System.out.println("Compraste Sangre de Grieta."); }
+                    else System.out.println("No tienes suficientes almas.");
+                } else if (line.equals("2")) {
+                    if (player.spendSouls(3)) { System.out.println("Compraste una Esquirla de Realidad. Sientes que podrías eludir un destino."); }
+                    else System.out.println("No tienes suficientes almas.");
+                } else if (line.equals("3")) {
+                    if (player.spendSouls(2)) { System.out.println("Compraste el Ojo del Retorno. Una visión te guía hacia el jefe."); }
+                    else System.out.println("No tienes suficientes almas.");
+                } else {
+                    System.out.println("Opción inválida.");
+                }
+            }
+            return;
         }
 
         System.out.println("Entras al Mercado del Silencio. Un mercader te observa desde su puesto.");
@@ -221,6 +256,23 @@ public class Floor {
                 solvedRooms.add(room.getId());
             } else {
                 System.out.println("La inscripción se apaga. No obtienes nada.");
+            }
+            return;
+        }
+        if ("El Núcleo del Abismo".equals(this.name) && "Cámara del Olvido".equals(room.getTitle())) {
+            for (String line : java.util.Objects.requireNonNullElse(room.getDialogue(), java.util.List.<String>of())) {
+                System.out.println(line);
+            }
+            System.out.print("Respuesta: ");
+            String ans = br.readLine();
+            if (ans == null) ans = "";
+            String cleaned = ans.trim().toLowerCase();
+            if (cleaned.contains("vacío") || cleaned.contains("vacio")) {
+                System.out.println("Aurelion: “El vacío no me consumirá. Yo lo cerraré.”");
+                System.out.println("Recompensa: Esquirla de Realidad — permite evitar un combate.");
+                solvedRooms.add(room.getId());
+            } else {
+                System.out.println("El susurro se disipa. No obtienes nada.");
             }
             return;
         }

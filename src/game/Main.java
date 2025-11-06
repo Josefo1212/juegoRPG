@@ -50,7 +50,8 @@ public class Main {
             System.out.println("¿Deseas iniciar el combate contra Thargron? (s/n)");
             String fight = br.readLine();
             if (fight != null && !fight.isEmpty() && fight.trim().equalsIgnoreCase("s")) {
-                    enemies.Thargron boss = new enemies.Thargron("Thargron, el Martillo Silente", 1, 1, 12, 3, 1500L, 0);
+                    // Antes estaba maxHp=1. Ajustado para que el daño avance sin forzar mínimos.
+                    enemies.Thargron boss = new enemies.Thargron("Thargron, el Martillo Silente", 1, 1, 12, 3, 1500L, 5);
                     boolean win = QTECombat.run(br, player, boss);
                 player.onCombatEnd();
                 if (win) {
@@ -91,7 +92,8 @@ public class Main {
                             System.out.println("Ante ti: Selmira, la Voz Encadenada. ¿Combatir? (s/n)");
                             String fight2 = br.readLine();
                             if (fight2 != null && fight2.trim().equalsIgnoreCase("s")) {
-                                enemies.Selmira boss2 = new enemies.Selmira("Selmira, la Voz Encadenada", 2, 1, 14, 4, 1300L, 0);
+                                // Antes estaba maxHp=1. Ajustado para progreso normal.
+                                enemies.Selmira boss2 = new enemies.Selmira("Selmira, la Voz Encadenada", 2, 1, 14, 3, 1300L, 7);
                                 boolean win2 = QTECombat.run(br, player, boss2);
                                 player.onCombatEnd();
                                 if (win2) {
@@ -116,7 +118,43 @@ public class Main {
                                     System.out.println("¿Continuar hacia el tercer piso (Núcleo del Abismo)? (s/n)");
                                     String cont3 = br.readLine();
                                     if (cont3 != null && cont3.trim().equalsIgnoreCase("s")) {
-                                        System.out.println("Transición al tercer piso (pendiente de implementación).");
+                                        // Piso 3
+                                        boolean bossHere3 = Dungeon.playTercerPiso(br, player);
+                                        if (bossHere3) {
+                                            System.out.println();
+                                            System.out.println("Ante ti: Zar'keth, el Portador de la Grieta. ¿Combatir? (s/n)");
+                                            String fight3 = br.readLine();
+                                            if (fight3 != null && fight3.trim().equalsIgnoreCase("s")) {
+                                                // Ajustado: vida y defensa coherentes para que el combate progrese.
+                                                enemies.Zarketh boss3 = new enemies.Zarketh("Zar'keth, el Portador de la Grieta", 3, 1
+                                                        , 16, 3, 1100L, 10);
+                                                boolean win3 = QTECombat.run(br, player, boss3);
+                                                player.onCombatEnd();
+                                                if (win3) {
+                                                    // Al vencer, ya se muestran reliquia y diálogos finales más abajo
+                                                    Relic r3 = boss3.getRelicReward();
+                                                    System.out.println("Has vencido a Zar'keth y obtenido: " + r3.getName() + " (guardada en tu inventario).");
+                                                    List<Relic> relics3 = player.getRelics();
+                                                    System.out.println("Reliquias actuales:");
+                                                    for (Relic rr : relics3) System.out.println(" - " + rr.getName());
+
+                                                    // Final del juego — Restauración (diálogo correspondiente)
+                                                    System.out.println();
+                                                    System.out.println("Narrador: “El Núcleo ha sido sellado. La Grieta se cierra.");
+                                                    System.out.println("Aurelion, restaurado en fuerza, magia y divinidad, vuelve a ser Guardián.");
+                                                    System.out.println("Pero el mundo ha cambiado… y su equilibrio deberá ser vigilado una vez más.”");
+                                                    System.out.println("Aurelion: “El abismo me quitó todo.");
+                                                    System.out.println("Pero no mi voluntad.");
+                                                    System.out.println("Soy Aurelion. Y el sello… permanece.”");
+                                                } else {
+                                                    System.out.println("Has caído ante Zar'keth. La Grieta continúa abierta.");
+                                                }
+                                            } else {
+                                                System.out.println("Te retiras por ahora. El Núcleo sigue respirando en silencio...");
+                                            }
+                                        } else {
+                                            System.out.println("No encontraste al Portador en este intento.");
+                                        }
                                     } else {
                                         System.out.println("Detienes tu ascenso por ahora, guardando el poder reunido.");
                                     }
