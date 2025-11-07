@@ -51,7 +51,7 @@ public class Main {
             String fight = br.readLine();
             if (fight != null && !fight.isEmpty() && fight.trim().equalsIgnoreCase("s")) {
                     // Antes estaba maxHp=1. Ajustado para que el daño avance sin forzar mínimos.
-                    enemies.Thargron boss = new enemies.Thargron("Thargron, el Martillo Silente", 1, 1, 12, 3, 1500L, 5);
+                    enemies.Thargron boss = new enemies.Thargron("Thargron, el Martillo Silente", 1, 100, 12, 3, 1500L, 5,120);
                     boolean win = QTECombat.run(br, player, boss);
                 player.onCombatEnd();
                 if (win) {
@@ -93,7 +93,7 @@ public class Main {
                             String fight2 = br.readLine();
                             if (fight2 != null && fight2.trim().equalsIgnoreCase("s")) {
                                 // Antes estaba maxHp=1. Ajustado para progreso normal.
-                                enemies.Selmira boss2 = new enemies.Selmira("Selmira, la Voz Encadenada", 2, 1, 14, 3, 1300L, 7);
+                                enemies.Selmira boss2 = new enemies.Selmira("Selmira, la Voz Encadenada", 2, 150, 14, 3, 1300L, 7,120);
                                 boolean win2 = QTECombat.run(br, player, boss2);
                                 player.onCombatEnd();
                                 if (win2) {
@@ -125,9 +125,8 @@ public class Main {
                                             System.out.println("Ante ti: Zar'keth, el Portador de la Grieta. ¿Combatir? (s/n)");
                                             String fight3 = br.readLine();
                                             if (fight3 != null && fight3.trim().equalsIgnoreCase("s")) {
-                                                // Ajustado: vida y defensa coherentes para que el combate progrese.
-                                                enemies.Zarketh boss3 = new enemies.Zarketh("Zar'keth, el Portador de la Grieta", 3, 1
-                                                        , 16, 3, 1100L, 10);
+                                                enemies.Zarketh boss3 = new enemies.Zarketh("Zar'keth, el Portador de la Grieta", 3, 300
+                                                        , 16, 3, 1100L, 10,200);
                                                 boolean win3 = QTECombat.run(br, player, boss3);
                                                 player.onCombatEnd();
                                                 if (win3) {

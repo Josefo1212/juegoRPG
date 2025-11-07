@@ -10,8 +10,9 @@ public abstract class Enemy {
     private final int defense;
     private final long reactionTimeMs;
     private final int soulsReward;
+    private final int expReward;
 
-    protected Enemy(String name, int floor, int maxHp, int attack, int defense, long reactionTimeMs, int soulsReward) {
+    protected Enemy(String name, int floor, int maxHp, int attack, int defense, long reactionTimeMs, int soulsReward, int expReward) {
         this.name = name;
         this.floor = floor;
         this.maxHp = maxHp;
@@ -20,6 +21,7 @@ public abstract class Enemy {
         this.defense = defense;
         this.reactionTimeMs = reactionTimeMs;
         this.soulsReward = soulsReward;
+        this.expReward = expReward;
     }
 
     public String getName() { return name; }
@@ -29,6 +31,7 @@ public abstract class Enemy {
 
     public long getReactionTimeMs() { return reactionTimeMs; }
     public int getSoulsReward() { return soulsReward; }
+    public int getExpReward() { return expReward; }
     public int getDefense() { return defense; }
 
     public boolean isAlive() { return hp > 0; }

@@ -162,6 +162,11 @@ public class QTECombat {
             if (enemy.getSoulsReward() > 0) {
                 player.addSouls(enemy.getSoulsReward());
                 System.out.println("Has obtenido " + enemy.getSoulsReward() + " almas. Total: " + player.getSouls());
+            if (enemy.getExpReward() > 0) {
+        player.gainExp(enemy.getExpReward());
+        System.out.println("Has ganado " + enemy.getExpReward() + " EXP. Total: " 
+            + player.getCurrentExp() + "/" + player.getExpToNextLevel());
+    }
             }
             if (enemy instanceof Boss) {
                 Relic relic = ((Boss) enemy).getRelicReward();
@@ -180,7 +185,7 @@ public class QTECombat {
     /** Convenience demo method using a fresh Player and a sample enemy */
     public static void runDemo(BufferedReader br) throws IOException {
         // demo enemy: Centinela Oxidado (4s reaction)
-        Enemy demo = new enemies.RustySentinels("Centinela Oxidado", 1, 30, 8, 1, 4000L, 1);
+        Enemy demo = new enemies.RustySentinels("Centinela Oxidado", 1, 30, 8, 1, 4000L, 1, 20);
         run(br, new Player(), demo);
     }
 }

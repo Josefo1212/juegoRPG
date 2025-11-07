@@ -41,6 +41,7 @@ public class Floor {
         while (true) {
             System.out.println();
             System.out.println("Estás en la Sala 1 (El Hub). Vida: " + player.getHp() + "/" + player.getMaxHp() + ", Almas: " + player.getSouls());
+            System.out.println("EXP: " + player.getCurrentExp() + "/" + player.getExpToNextLevel());
             System.out.println("Elige una sala para visitar (2-" + rooms.size() + "), 0 para salir del piso, o 'I' para ver inventario:");
             for (int i = 2; i <= rooms.size(); i++) {
                 Room r = byId.get(i);
@@ -152,7 +153,7 @@ public class Floor {
 
             boolean win = false;
             try {
-                enemies.RustySentinels enemy = new enemies.RustySentinels("Centinela Oxidado", 1, 30, 8, 1, 4000L, 1);
+                enemies.RustySentinels enemy = new enemies.RustySentinels("Centinela Oxidado", 1, 30, 8, 1, 4000L, 1, 20);
                 win = QTECombat.run(br, player, enemy);
             } catch (IOException ioe) {
                 System.out.println("Error en combate: " + ioe.getMessage());

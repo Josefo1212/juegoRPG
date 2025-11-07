@@ -7,6 +7,8 @@ public class Player {
 
     private final String name = playerName;
     private int level = 1;
+    private int currentExp = 0;
+    private int expToNextLevel = 100;
     private int maxHp = 50;
     private int hp = 50;
     private int strength = 8;
@@ -19,12 +21,36 @@ public class Player {
 
         public String getName() { return name; }
         public int getLevel() { return level; }
+
+          public void gainExp(int amount) {
+    if (amount <= 0) return;
+    currentExp += amount;
+
+    while (currentExp >= expToNextLevel) {
+        levelUp();
+    }
+}
+
+        private void levelUp() {
+    currentExp -= expToNextLevel;
+    level++;
+    expToNextLevel += 100; 
+    maxHp += 5;
+    strength += 2;
+    defense += 1;
+
+    System.out.println(name + " ha subido a nivel " + level + "!");
+}
+       
+        public int getCurrentExp() { return currentExp; }
+        public int getExpToNextLevel() { return expToNextLevel; }
+        
         public int getMaxHp() { return maxHp; }
-    public int getHp() { return hp; }
+        public int getHp() { return hp; }
 
         public boolean isAlive() { return hp > 0; }
 
-    public int rollAttack() { return strength + tempAttackBuff; }
+        public int rollAttack() { return strength + tempAttackBuff; }
 
         public void takeDamage(int incoming) {
             int damageTaken = Math.max(incoming - defense, 0);
@@ -44,7 +70,7 @@ public class Player {
         public void setDefense(int d) { this.defense = d; }
     public void setMaxHp(int mh) { this.maxHp = mh; this.hp = Math.min(this.hp, mh); }
 
-    // Metodos para almas
+
     public int getSouls() { return souls; }
     public void addSouls(int n) { this.souls += n; }
     public boolean spendSouls(int n) {
@@ -53,7 +79,7 @@ public class Player {
         return false;
     }
 
-    // Metodos de inventario
+
     public Inventory getInventory() { return inventory; }
 
     public int getHealthPotions() { return inventory.getHealthPotions(); }
@@ -74,21 +100,21 @@ public class Player {
     public void grantSecondChance() { inventory.grantSecondChance(); }
     public boolean consumeSecondChance() { return inventory.consumeSecondChance(); }
 
-    // NUEVO: reliquias con incremento de stats al recibirlas
+
     public void addRelic(Relic relic) {
         if (relic == null) return;
         boolean added = inventory.addRelic(relic);
-        if (!added) return; // ya la tenías, no re-aplicar bonus
+        if (!added) return; 
 
         RelicType t = relic.getType();
         if (t == RelicType.sacredTitaniumCore) {
-            // 1ª reliquia: fuerza
+
             this.setStrength(this.rollAttack() - this.tempAttackBuff + 5);
         } else if (t == RelicType.songOfTheInnerFlame) {
-            // 2ª reliquia: magia
+
             this.magicPower += 5;
         } else if (t == RelicType.emblemOfEternalReturn) {
-            // 3ª reliquia: vitalidad/divinidad (vida máxima)
+
             this.setMaxHp(this.getMaxHp() + 10);
         }
     }
@@ -96,13 +122,13 @@ public class Player {
     public boolean hasRelic(RelicType type) { return inventory.hasRelic(type); }
     public List<Relic> getRelics() { return inventory.getRelics(); }
 
-    // Buffo temporal
+
     public void addTempAttackBuff(int amount, int durationCombats) {
         this.tempAttackBuff += amount;
         this.tempBuffDuration = Math.max(this.tempBuffDuration, durationCombats);
     }
 
-    // quitar buffos al terminar combate
+
     public void onCombatEnd() {
         if (tempBuffDuration > 0) tempBuffDuration--;
         if (tempBuffDuration <= 0) {
@@ -111,9 +137,9 @@ public class Player {
         }
     }
 
-    // curar completamente al maximo de HP (usado en hub/rest)
+
     public void fullRest() { this.hp = this.maxHp; }
 
-    // NUEVO: getter de magia
+
     public int getMagicPower() { return magicPower; }
 }
