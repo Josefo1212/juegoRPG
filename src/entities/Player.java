@@ -108,13 +108,14 @@ public class Player {
 
         RelicType t = relic.getType();
         if (t == RelicType.sacredTitaniumCore) {
-
-            this.setStrength(this.rollAttack() - this.tempAttackBuff + 5);
+            // Antes: +5; ahora aplicar +50 de fuerza base permanente
+            // Usamos el setter para mantener coherencia con posibles validaciones futuras
+            this.setStrength(this.strength + 50);
         } else if (t == RelicType.songOfTheInnerFlame) {
-
-            this.magicPower += 5;
+            // Antes: +5; ahora aplicar un aumento significativo al poder mágico
+            this.magicPower += 50;
         } else if (t == RelicType.emblemOfEternalReturn) {
-
+            // Se mantiene efecto del emblema
             this.setMaxHp(this.getMaxHp() + 10);
         }
     }

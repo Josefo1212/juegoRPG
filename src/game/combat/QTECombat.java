@@ -96,7 +96,10 @@ public class QTECombat {
             if (!enemy.isAlive()) break;
 
             // Turno de jugador
-            System.out.println("Es tu turno: (a) atacar  (p) usar pocion");
+            // Mostrar opción de ataque mágico sólo si el jugador tiene magia
+            String turnoOpciones = "Es tu turno: (a) atacar  (p) usar pocion";
+            if (player.getMagicPower() > 0) turnoOpciones += "  (m) ataque mágico";
+            System.out.println(turnoOpciones);
             System.out.print("> ");
             String action = null;
             while (true) {
@@ -112,6 +115,18 @@ public class QTECombat {
                 int dmg = Math.max(atk - def, 0);
                 enemy.takeDamage(dmg);
                 System.out.println("Atacaste por " + dmg + " daño. Vida enemiga: " + enemy.getHp());
+            } else if (act == 'm' && player.getMagicPower() > 0) {
+                // Ataque mágico: usa el stat de magia para calcular daño.
+                // Se considera parcialmente la defensa enemiga (no mostrar desglose).
+                int magic = player.getMagicPower();
+                int def = enemy.getDefense();
+                int dmg = Math.max(magic - (def / 2), 0);
+                enemy.takeDamage(dmg);
+                if (dmg > 0) {
+                    System.out.println("Usaste un ataque mágico por " + dmg + " daño. Vida enemiga: " + enemy.getHp());
+                } else {
+                    System.out.println("Tu ataque mágico no tuvo efecto. Vida enemiga: " + enemy.getHp());
+                }
             } else if (act == 'u') {
                 player.heal(20);
                 System.out.println("Usaste poción.");
@@ -162,11 +177,11 @@ public class QTECombat {
             if (enemy.getSoulsReward() > 0) {
                 player.addSouls(enemy.getSoulsReward());
                 System.out.println("Has obtenido " + enemy.getSoulsReward() + " almas. Total: " + player.getSouls());
-            if (enemy.getExpReward() > 0) {
-        player.gainExp(enemy.getExpReward());
-        System.out.println("Has ganado " + enemy.getExpReward() + " EXP. Total: " 
-            + player.getCurrentExp() + "/" + player.getExpToNextLevel());
-    }
+                if (enemy.getExpReward() > 0) {
+                    player.gainExp(enemy.getExpReward());
+                    System.out.println("Has ganado " + enemy.getExpReward() + " EXP. Total: "
+                        + player.getCurrentExp() + "/" + player.getExpToNextLevel());
+                }
             }
             if (enemy instanceof Boss) {
                 Relic relic = ((Boss) enemy).getRelicReward();
